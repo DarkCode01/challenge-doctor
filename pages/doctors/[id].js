@@ -4,8 +4,10 @@ import Page from "components/Page";
 import Navbar from "components/Navbar";
 import Footer from "components/Footer";
 import Cards from "components/Cards";
-import { Drawer, Layout, PageHeader, Pagination } from "antd";
+import Comments from "components/Comments";
+import { Input,Space, Divider, Form, Button, Rate, Typography, Row, Col, Card, Drawer, Layout, Descriptions, PageHeader, Pagination, Timeline } from "antd";
 import styles from "styles/Home.module.css";
+
 
 const Doctor = ({ id }) => {
   const router = useRouter();
@@ -38,15 +40,70 @@ const Doctor = ({ id }) => {
             <Footer />
 
             <Drawer
-              title="Basic Drawer"
-              placement="right"
-              closable={false}
+              title={<>
+                Dr. Jose Segura
+              </>}
+              placement="bottom"
+              closable={true}
               onClose={onClose}
               visible={isOpen}
+              height={640}
             >
-              <p>Some contents...</p>
-              <p>Some contents...</p>
-              <p>Some contents...</p>
+              <Space size={10} direction="vertical">
+                <Row gutter={[16, 8]}>
+                  <Col span={12}>
+                    <Card>
+                      <Descriptions title={(
+                        <>
+                          Detalles
+                          <Divider />
+                        </>
+                      )}>
+                        <Descriptions.Item label="Nombre">Jose Segura</Descriptions.Item>
+                        <Descriptions.Item label="Experiencia">14 años</Descriptions.Item>
+                        <Descriptions.Item label="Horario">2019-02-20</Descriptions.Item>
+                        <Descriptions.Item label="Direccion">
+                          Republica Dominicaca, Santo Domingo
+                        </Descriptions.Item>
+                      </Descriptions>
+
+                      <Card title="valorar">
+                        <Form>
+                          <Form.Item>
+                            <Rate />
+                          </Form.Item>
+                          <Form.Item>
+                            <Input.TextArea />
+                          </Form.Item>
+                          <Form.Item>
+                            <Button block>enviar</Button>
+                          </Form.Item>
+                        </Form>
+                      </Card>
+                    </Card>
+                  </Col>
+                  <Col span={12}>
+                    <Card>
+                      <Typography.Title level={5}>Especialidades</Typography.Title>
+                      <Divider />
+                      <Timeline>
+                        <Timeline.Item>Create a services site 2015-09-01</Timeline.Item>
+                        <Timeline.Item>Solve initial network problems 2015-09-01</Timeline.Item>
+                        <Timeline.Item>Technical testing 2015-09-01</Timeline.Item>
+                        <Timeline.Item>Network problems being solved 2015-09-01</Timeline.Item>
+                      </Timeline>
+                    </Card>
+                  </Col>
+                </Row>
+
+                <Row>
+                  <Col span={24}>
+                    <Card actions={[<Button type="link" block>Cargar mas...</Button>]}>
+                      <Comments data={[1, 2, 3, 4, 5]} />
+                    </Card>
+                  </Col>
+                </Row>
+              </Space>
             </Drawer>
           </Layout.Content>
         </Layout>
