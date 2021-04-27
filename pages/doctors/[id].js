@@ -1,12 +1,21 @@
-import Link from "next/link";
+import { useRouter } from "next/router";
+import { useState, useCallback } from "react";
 import Page from "components/Page";
 import Navbar from "components/Navbar";
 import Footer from "components/Footer";
-import { Rate, Layout, PageHeader, Row, Col, Descriptions, Card, Pagination, Button } from "antd";
+import { Drawer, Rate, Layout, PageHeader, Row, Col, Descriptions, Card, Pagination, Button } from "antd";
 import styles from "styles/Home.module.css";
 import { ArrowRightOutlined } from "@ant-design/icons";
 
-export default function Home() {
+const Doctor = ({ id }) => {
+  const router = useRouter();
+  const [isOpen, setOpen] = useState(true);
+  const toggle = useCallback(() => setOpen(!isOpen), [isOpen]);
+  const onClose = () => {
+    toggle();
+    router.back();
+  }
+
   return (
     <Page>
       <Layout>
@@ -27,9 +36,7 @@ export default function Home() {
                     loading={false}
                     actions={[
                       <Button icon={<ArrowRightOutlined />}>
-                        <Link href="/doctors/10" shallow={true}>
-                          ver mas información
-                        </Link>
+                        ver mas información
                       </Button>
                     ]}
                   >
@@ -47,9 +54,31 @@ export default function Home() {
             </div>
 
             <Footer />
+
+            <Drawer
+              title="Basic Drawer"
+              placement="right"
+              closable={false}
+              onClose={onClose}
+              visible={isOpen}
+            >
+              <p>Some contents...</p>
+              <p>Some contents...</p>
+              <p>Some contents...</p>
+            </Drawer>
           </Layout.Content>
         </Layout>
       </Layout>
     </Page>
-  )
+  );
+};
+
+export async function getServerSideProps(context) {
+  return {
+    props: {
+      id: context.query.id
+    }
+  }
 }
+
+export default Doctor;
