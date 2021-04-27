@@ -1,10 +1,9 @@
-import Link from "next/link";
 import Page from "components/Page";
 import Navbar from "components/Navbar";
 import Footer from "components/Footer";
-import { Rate, Layout, PageHeader, Row, Col, Descriptions, Card, Pagination, Button } from "antd";
+import Cards from "components/Cards";
+import {Layout, PageHeader, Pagination } from "antd";
 import styles from "styles/Home.module.css";
-import { ArrowRightOutlined } from "@ant-design/icons";
 
 export default function Home() {
   return (
@@ -21,27 +20,7 @@ export default function Home() {
                 onBack={() => null}
               />
 
-              <Row gutter={[16, 16]}>
-                <Col span={8}>
-                  <Card
-                    loading={false}
-                    actions={[
-                      <Button icon={<ArrowRightOutlined />}>
-                        <Link href="/doctors/10" shallow={true}>
-                          ver mas información
-                        </Link>
-                      </Button>
-                    ]}
-                  >
-                    <Card.Meta
-                      title="Dr. Jose Miguel Segura"
-                      description={
-                        <Rate disabled defaultValue={3} />
-                      }
-                    />
-                  </Card>
-                </Col>
-              </Row>
+              <Cards doctors={[1, 2, 3, 4, 5, 6, 7, 8, 9, 3, 2, 2]}/>
 
               <Pagination className={styles.pagination} current={25} total={50} />
             </div>
