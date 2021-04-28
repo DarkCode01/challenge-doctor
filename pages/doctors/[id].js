@@ -21,6 +21,7 @@ import {
   Col,
   Card,
   Drawer,
+  Alert,
   Layout,
   Descriptions,
   PageHeader,
@@ -39,7 +40,7 @@ const Doctor = ({ id }) => {
   const [isSuccess, setSuccess] = useState(false);
   const [isModal, setModal] = useState(false);
   const { locations } = useLocations();
-  const { details } = useDoctorDetails(id);
+  const { details, error } = useDoctorDetails(id);
   const [reviews, setReviews] = useState(details.reviews || []);
   const [appointments, setAppointments] = useState(details.appointments || []);
   const mean = calculateMean(reviews || []);
@@ -147,6 +148,15 @@ const Doctor = ({ id }) => {
               height={640}
             >
               <Space size={10} direction="vertical">
+                {error.isError && (
+                  <Alert
+                    type="error"
+                    message="Error al intentar obtener los datos."
+                    onClose={() => error.handle(null)}
+                    closable
+                  />
+                )}
+
                 <Row gutter={[16, 8]}>
                   <Col span={12}>
                     <Card>

@@ -7,13 +7,13 @@ import styles from "styles/Home.module.css";
 import { useDoctors } from "lib/hooks/useDoctors";
 import { SearchOutlined } from "@ant-design/icons";
 import FilterForm from "components/FilterForm";
-import { Layout, PageHeader, Pagination, Button } from "antd";
+import { Alert, Layout, PageHeader, Pagination, Button } from "antd";
 
 export default function Home() {
   const router = useRouter();
   const [isSearch, setSearch] = useState(false);
   const [q, setQ] = useState(router.query.q || "");
-  const { isLoading, doctors, pagination } = useDoctors(
+  const { isLoading, doctors, pagination, error } = useDoctors(
     router.query?.page || 1,
     q
   );
@@ -42,6 +42,15 @@ export default function Home() {
 
               {/* only display when is mobile screen */}
               {isSearch && <FilterForm hide handleSubmit={changeQ} />}
+
+              {error.isError && (
+                <Alert
+                  type="error"
+                  message="Error al intentar obtener los datos."
+                  onClose={() => error.handle(null)}
+                  closable
+                />
+              )}
 
               <Cards
                 isLoading={isLoading}
