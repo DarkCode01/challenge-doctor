@@ -13,8 +13,6 @@ export default function Home() {
     router.query?.page || 1
   );
 
-  console.log(router.query);
-
   return (
     <Page>
       <Layout>

@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import dayjs from "dayjs";
 import Page from "components/Page";
 import Navbar from "components/Navbar";
@@ -7,13 +7,12 @@ import Footer from "components/Footer";
 import Cards from "components/Cards";
 import Comments from "components/Comments";
 import { useDoctorDetails } from "lib/hooks/useDoctorDetails";
+import { useLocations } from "lib/hooks/useLocations";
 import { calculateMean } from "lib/utils";
+import ReviewForm from "components/ReviewForm";
 import {
-  Input,
   Space,
   Divider,
-  Form,
-  Button,
   Rate,
   Typography,
   Row,
@@ -25,15 +24,19 @@ import {
   PageHeader,
   Pagination,
   Timeline,
-  Select,
+  Result,
 } from "antd";
 import styles from "styles/Home.module.css";
+import { api } from "lib/services/api";
 
 const Doctor = ({ id }) => {
   const router = useRouter();
   const [isOpen, setOpen] = useState(true);
+  const [isSuccess, setSuccess] = useState(false);
+  const { locations } = useLocations();
   const { details } = useDoctorDetails(id);
-  const mean = calculateMean(details.reviews || []);
+  const [reviews, setReviews] = useState(details.reviews || []);
+  const mean = calculateMean(reviews || []);
 
   const toggle = useCallback(() => setOpen(!isOpen), [isOpen]);
   const onClose = () => {
@@ -42,9 +45,25 @@ const Doctor = ({ id }) => {
   };
 
   const handleSubmit = async (values) => {
-    // TODO: send post for review
-    console.log(values);
+    try {
+      // create user
+      const response = await api.createUser(values);
+      const reviewResponse = await api.createReview({
+        ...values,
+        doctor: id,
+        user_id: response.data.result.id,
+      });
+
+      setReviews((p) => [...p, reviewResponse.data.result]);
+      setSuccess(true);
+    } catch (err) {
+      console.log(err);
+    }
   };
+
+  useEffect(() => {
+    setReviews(details.reviews);
+  }, [details.reviews]);
 
   return (
     <Page>
@@ -108,40 +127,19 @@ const Doctor = ({ id }) => {
                       </Descriptions>
 
                       <Card title="valorar">
-                        <Form
-                          layout="vertical"
-                          initialValues={{
-                            comments: "",
-                            starts: 1,
-                            names: "",
-                          }}
-                          onFinish={handleSubmit}
-                        >
-                          <Form.Item label="Estrellas" name="starts">
-                            <Rate defaultValue={1} />
-                          </Form.Item>
-                          <Form.Item label="Nombre" name="names">
-                            <Input />
-                          </Form.Item>
-                          <Form.Item label="Ubicación" name="location_id">
-                            <Select placeholder="seleccionar">
-                              <Select.Option value="1">
-                                Dominican Republica, Santo Domingo
-                              </Select.Option>
-                            </Select>
-                          </Form.Item>
-                          <Form.Item
-                            label="Comentario (opcional)"
-                            name="comment"
-                          >
-                            <Input.TextArea />
-                          </Form.Item>
-                          <Form.Item>
-                            <Button color="success" htmlType="submit" block>
-                              enviar
-                            </Button>
-                          </Form.Item>
-                        </Form>
+                        {!isSuccess && (
+                          <ReviewForm
+                            handleSubmit={handleSubmit}
+                            locations={locations}
+                          />
+                        )}
+                        {isSuccess && (
+                          <Result
+                            status="success"
+                            title="Su valoracion fue enviada con exitos!"
+                            subTitle="Solo puede realizar una valoración por cuenta"
+                          />
+                        )}
                       </Card>
                     </Card>
                   </Col>
@@ -168,7 +166,7 @@ const Doctor = ({ id }) => {
                 <Row>
                   <Col span={24}>
                     <Card>
-                      <Comments data={details.reviews} mean={mean} />
+                      <Comments data={reviews} mean={mean} />
                     </Card>
                   </Col>
                 </Row>

@@ -14,7 +14,11 @@ export default function Comments({ data }) {
       renderItem={(comment) => (
         <li>
           <Comment
-            author={<Typography.Title level={5}>{comment.id}</Typography.Title>}
+            author={
+              <Typography.Title level={5}>
+                {comment.reviewer.names}
+              </Typography.Title>
+            }
             content={<p>{comment.comment}</p>}
             datetime={
               <Rate
