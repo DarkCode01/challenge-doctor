@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import Page from "components/Page";
 import Navbar from "components/Navbar";
 import Footer from "components/Footer";
@@ -7,7 +8,12 @@ import styles from "styles/Home.module.css";
 import { useDoctors } from "lib/hooks/useDoctors";
 
 export default function Home() {
-  const { isLoading, doctors, errors } = useDoctors();
+  const router = useRouter();
+  const { isLoading, doctors, pagination } = useDoctors(
+    router.query?.page || 1
+  );
+
+  console.log(router.query);
 
   return (
     <Page>
@@ -34,8 +40,11 @@ export default function Home() {
 
               <Pagination
                 className={styles.pagination}
-                current={25}
-                total={50}
+                current={parseInt(router.query.page) || 1}
+                total={pagination.items}
+                // showQuickJumper={false}
+                showSizeChanger={false}
+                onChange={(p) => router.push(`/?page=${p}`)}
               />
             </div>
 

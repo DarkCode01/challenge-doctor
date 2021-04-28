@@ -32,7 +32,7 @@ export default function Navbar() {
           <Link href="/">Principal</Link>
         </Menu.Item>
         <Menu.Item key="3" icon={<UploadOutlined />}>
-          <Link href="/123">Mi cuenta</Link>
+          <Link href="/me">Mi cuenta</Link>
         </Menu.Item>
       </Menu>
     </Layout.Sider>
