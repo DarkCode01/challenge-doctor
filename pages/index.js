@@ -1,65 +1,55 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import { useRouter } from "next/router";
+import Page from "components/Page";
+import Navbar from "components/Navbar";
+import Footer from "components/Footer";
+import Cards from "components/Cards";
+import { Layout, PageHeader, Pagination } from "antd";
+import styles from "styles/Home.module.css";
+import { useDoctors } from "lib/hooks/useDoctors";
 
 export default function Home() {
+  const router = useRouter();
+  const { isLoading, doctors, pagination } = useDoctors(
+    router.query?.page || 1
+  );
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <Page>
+      <Layout>
+        <Navbar />
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+        <Layout>
+          <Layout.Content style={{ margin: "24px 16px 0", padding: "0 20px" }}>
+            <div className={styles.container}>
+              <PageHeader
+                title="Principal"
+                subTitle="lista de doctores"
+                onBack={() => null}
+              />
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+              <Cards
+                isLoading={isLoading}
+                doctors={
+                  doctors.length >= 1
+                    ? doctors
+                    : [null, null, null, null, null, null, null, null, null]
+                }
+              />
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+              <Pagination
+                className={styles.pagination}
+                current={parseInt(router.query.page) || 1}
+                total={pagination.items}
+                // showQuickJumper={false}
+                showSizeChanger={false}
+                onChange={(p) => router.push(`/?page=${p}`)}
+              />
+            </div>
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
-  )
+            <Footer />
+          </Layout.Content>
+        </Layout>
+      </Layout>
+    </Page>
+  );
 }
