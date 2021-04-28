@@ -7,7 +7,7 @@ export default function CardDoctor({ isLoading, doctors }) {
   return (
     <Row gutter={[16, 16]}>
       {doctors.map((doctor, index) => {
-        const mean = calculateMean(doctor?.reviews);
+        const mean = calculateMean(doctor?.reviews || []);
 
         return (
           <Col span={8} key={`doctor-card-${index}`}>

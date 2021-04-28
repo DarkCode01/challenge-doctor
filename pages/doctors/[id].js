@@ -1,30 +1,54 @@
 import { useRouter } from "next/router";
 import { useState, useCallback } from "react";
+import dayjs from "dayjs";
 import Page from "components/Page";
 import Navbar from "components/Navbar";
 import Footer from "components/Footer";
 import Cards from "components/Cards";
 import Comments from "components/Comments";
-import { Input,Space, Divider, Form, Button, Rate, Typography, Row, Col, Card, Drawer, Layout, Descriptions, PageHeader, Pagination, Timeline } from "antd";
+import { useDoctorDetails } from "lib/hooks/useDoctorDetails";
+import { calculateMean } from "lib/utils";
+import {
+  Input,
+  Space,
+  Divider,
+  Form,
+  Button,
+  Rate,
+  Typography,
+  Row,
+  Col,
+  Card,
+  Drawer,
+  Layout,
+  Descriptions,
+  PageHeader,
+  Pagination,
+  Timeline,
+} from "antd";
 import styles from "styles/Home.module.css";
-
 
 const Doctor = ({ id }) => {
   const router = useRouter();
   const [isOpen, setOpen] = useState(true);
+  const { isLoading, details, error } = useDoctorDetails(id);
+  const mean = calculateMean(details.reviews || []);
+
   const toggle = useCallback(() => setOpen(!isOpen), [isOpen]);
   const onClose = () => {
     toggle();
     router.back();
-  }
+  };
+
+  console.log(mean);
 
   return (
     <Page>
       <Layout>
         <Navbar />
-        
+
         <Layout>
-          <Layout.Content style={{ margin: '24px 16px 0', padding: '0 20px' }}>
+          <Layout.Content style={{ margin: "24px 16px 0", padding: "0 20px" }}>
             <div className={styles.container}>
               <PageHeader
                 title="Principal"
@@ -32,17 +56,24 @@ const Doctor = ({ id }) => {
                 onBack={() => null}
               />
 
-              <Cards doctors={[1, 2, 3, 4, 5, 6, 7, 8, 9, 3, 2, 2]}/>
+              <Cards doctors={[1, 2, 3, 4, 5, 6, 7, 8, 9, 3, 2, 2]} />
 
-              <Pagination className={styles.pagination} current={25} total={50} />
+              <Pagination
+                className={styles.pagination}
+                current={25}
+                total={50}
+              />
             </div>
 
             <Footer />
 
             <Drawer
-              title={<>
-                Dr. Jose Segura
-              </>}
+              title={
+                <>
+                  {details.names} -
+                  <Rate disabled defaultValue={mean} />
+                </>
+              }
               placement="bottom"
               closable={true}
               onClose={onClose}
@@ -53,17 +84,23 @@ const Doctor = ({ id }) => {
                 <Row gutter={[16, 8]}>
                   <Col span={12}>
                     <Card>
-                      <Descriptions title={(
-                        <>
-                          Detalles
-                          <Divider />
-                        </>
-                      )}>
-                        <Descriptions.Item label="Nombre">Jose Segura</Descriptions.Item>
-                        <Descriptions.Item label="Experiencia">14 años</Descriptions.Item>
-                        <Descriptions.Item label="Horario">2019-02-20</Descriptions.Item>
-                        <Descriptions.Item label="Direccion">
-                          Republica Dominicaca, Santo Domingo
+                      <Descriptions
+                        title={
+                          <>
+                            Detalles
+                            <Divider />
+                          </>
+                        }
+                      >
+                        <Descriptions.Item label="Nombre">
+                          {details.names}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Experiencia">
+                          {details.years} años
+                        </Descriptions.Item>
+                        {/* <Descriptions.Item label="Horario">2019-02-20</Descriptions.Item> */}
+                        <Descriptions.Item label="Ubicación">
+                          {details.location?.country}, {details.location?.state}
                         </Descriptions.Item>
                       </Descriptions>
 
@@ -84,13 +121,19 @@ const Doctor = ({ id }) => {
                   </Col>
                   <Col span={12}>
                     <Card>
-                      <Typography.Title level={5}>Especialidades</Typography.Title>
+                      <Typography.Title level={5}>
+                        Especialidades
+                      </Typography.Title>
                       <Divider />
                       <Timeline>
-                        <Timeline.Item>Create a services site 2015-09-01</Timeline.Item>
-                        <Timeline.Item>Solve initial network problems 2015-09-01</Timeline.Item>
-                        <Timeline.Item>Technical testing 2015-09-01</Timeline.Item>
-                        <Timeline.Item>Network problems being solved 2015-09-01</Timeline.Item>
+                        {details.specialities &&
+                          details.specialities.map((spc) => (
+                            <Timeline.Item key={spc.id}>
+                              {spc.name} (
+                              {dayjs(spc.date_init).format("MM-DD-YYYY")} -{" "}
+                              {dayjs(spc.date_finish).format("MM-DD-YYYY")})
+                            </Timeline.Item>
+                          ))}
                       </Timeline>
                     </Card>
                   </Col>
@@ -98,8 +141,8 @@ const Doctor = ({ id }) => {
 
                 <Row>
                   <Col span={24}>
-                    <Card actions={[<Button type="link" block>Cargar mas...</Button>]}>
-                      <Comments data={[1, 2, 3, 4, 5]} />
+                    <Card>
+                      <Comments data={details.reviews} mean={mean} />
                     </Card>
                   </Col>
                 </Row>
@@ -115,9 +158,9 @@ const Doctor = ({ id }) => {
 export async function getServerSideProps(context) {
   return {
     props: {
-      id: context.query.id
-    }
-  }
+      id: context.query.id,
+    },
+  };
 }
 
 export default Doctor;
