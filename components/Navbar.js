@@ -31,9 +31,6 @@ export default function Navbar() {
         <Menu.Item key="1" icon={<UserOutlined />}>
           <Link href="/">Principal</Link>
         </Menu.Item>
-        <Menu.Item key="3" icon={<UploadOutlined />}>
-          <Link href="/me">Mi cuenta</Link>
-        </Menu.Item>
       </Menu>
     </Layout.Sider>
   );
