@@ -25,13 +25,14 @@ import {
   PageHeader,
   Pagination,
   Timeline,
+  Select,
 } from "antd";
 import styles from "styles/Home.module.css";
 
 const Doctor = ({ id }) => {
   const router = useRouter();
   const [isOpen, setOpen] = useState(true);
-  const { isLoading, details, error } = useDoctorDetails(id);
+  const { details } = useDoctorDetails(id);
   const mean = calculateMean(details.reviews || []);
 
   const toggle = useCallback(() => setOpen(!isOpen), [isOpen]);
@@ -40,7 +41,10 @@ const Doctor = ({ id }) => {
     router.back();
   };
 
-  console.log(mean);
+  const handleSubmit = async (values) => {
+    // TODO: send post for review
+    console.log(values);
+  };
 
   return (
     <Page>
@@ -98,22 +102,44 @@ const Doctor = ({ id }) => {
                         <Descriptions.Item label="Experiencia">
                           {details.years} años
                         </Descriptions.Item>
-                        {/* <Descriptions.Item label="Horario">2019-02-20</Descriptions.Item> */}
                         <Descriptions.Item label="Ubicación">
                           {details.location?.country}, {details.location?.state}
                         </Descriptions.Item>
                       </Descriptions>
 
                       <Card title="valorar">
-                        <Form>
-                          <Form.Item>
-                            <Rate />
+                        <Form
+                          layout="vertical"
+                          initialValues={{
+                            comments: "",
+                            starts: 1,
+                            names: "",
+                          }}
+                          onFinish={handleSubmit}
+                        >
+                          <Form.Item label="Estrellas" name="starts">
+                            <Rate defaultValue={1} />
                           </Form.Item>
-                          <Form.Item>
+                          <Form.Item label="Nombre" name="names">
+                            <Input />
+                          </Form.Item>
+                          <Form.Item label="Ubicación" name="location_id">
+                            <Select placeholder="seleccionar">
+                              <Select.Option value="1">
+                                Dominican Republica, Santo Domingo
+                              </Select.Option>
+                            </Select>
+                          </Form.Item>
+                          <Form.Item
+                            label="Comentario (opcional)"
+                            name="comment"
+                          >
                             <Input.TextArea />
                           </Form.Item>
                           <Form.Item>
-                            <Button block>enviar</Button>
+                            <Button color="success" htmlType="submit" block>
+                              enviar
+                            </Button>
                           </Form.Item>
                         </Form>
                       </Card>
