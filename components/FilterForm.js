@@ -5,7 +5,7 @@ export default function FilterForm({ hide, handleSubmit }) {
   return (
     <Input.Search
       placeholder="Buscar"
-      className={!hide && styles.search}
+      className={!hide ? styles.search : styles.mobile}
       size="large"
       onSearch={handleSubmit}
     />
