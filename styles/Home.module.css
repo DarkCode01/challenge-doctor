@@ -8,3 +8,13 @@
 .pagination {
   align-self: center;
 }
+
+.button {
+  display: none;
+}
+
+@media only screen and (max-width: 600px) {
+  .button {
+    display: block;
+  }
+}

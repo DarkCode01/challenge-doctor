@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import { useState, useCallback, useEffect } from "react";
 import dayjs from "dayjs";
 import Page from "components/Page";
-import Navbar from "components/Navbar";
 import Footer from "components/Footer";
 import Cards from "components/Cards";
 import Comments from "components/Comments";
@@ -99,16 +98,10 @@ const Doctor = ({ id }) => {
   return (
     <Page>
       <Layout>
-        <Navbar />
-
         <Layout>
           <Layout.Content style={{ margin: "24px 16px 0", padding: "0 20px" }}>
             <div className={styles.container}>
-              <PageHeader
-                title="Principal"
-                subTitle="lista de doctores"
-                onBack={() => null}
-              />
+              <PageHeader title="Principal" subTitle="lista de doctores" />
 
               <Cards doctors={[1, 2, 3, 4, 5, 6, 7, 8, 9, 3, 2, 2]} />
 
