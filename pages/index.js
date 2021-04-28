@@ -1,21 +1,24 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Page from "components/Page";
 import Footer from "components/Footer";
 import Cards from "components/Cards";
 import styles from "styles/Home.module.css";
 import { useDoctors } from "lib/hooks/useDoctors";
-import { FilterOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import FilterForm from "components/FilterForm";
-import { Layout, PageHeader, Pagination, Button, Modal } from "antd";
-import Form from "antd/lib/form/Form";
+import { Layout, PageHeader, Pagination, Button } from "antd";
 
 export default function Home() {
   const router = useRouter();
   const [isSearch, setSearch] = useState(false);
+  const [q, setQ] = useState(router.query.q || "");
   const { isLoading, doctors, pagination } = useDoctors(
-    router.query?.page || 1
+    router.query?.page || 1,
+    q
   );
+
+  const changeQ = useCallback((value) => setQ(value), [q]);
 
   return (
     <Page>
@@ -33,12 +36,12 @@ export default function Home() {
                   >
                     Buscador
                   </Button>,
-                  <FilterForm />,
+                  <FilterForm handleSubmit={changeQ} />,
                 ]}
               />
 
               {/* only display when is mobile screen */}
-              {isSearch && <FilterForm hide />}
+              {isSearch && <FilterForm hide handleSubmit={changeQ} />}
 
               <Cards
                 isLoading={isLoading}
