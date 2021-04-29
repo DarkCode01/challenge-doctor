@@ -10,6 +10,7 @@ import { useLocations } from "lib/hooks/useLocations";
 import { calculateMean } from "lib/utils";
 import ReviewForm from "components/ReviewForm";
 import AppointmentForm from "components/AppointmentForm";
+import Details from "components/Details";
 import {
   Space,
   Modal,
@@ -148,27 +149,10 @@ const Doctor = ({ id }) => {
                   />
                 )}
 
-                <Row gutter={[16, 8]}>
-                  <Col span={12}>
+                <Row gutter={[16, 16]}>
+                  <Col md={12} xs={24}>
                     <Card>
-                      <Descriptions
-                        title={
-                          <>
-                            Detalles
-                            <Divider />
-                          </>
-                        }
-                      >
-                        <Descriptions.Item label="Nombre">
-                          {details.names}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="Experiencia">
-                          {details.years} años
-                        </Descriptions.Item>
-                        <Descriptions.Item label="Ubicación">
-                          {details.location?.country}, {details.location?.state}
-                        </Descriptions.Item>
-                      </Descriptions>
+                      <Details title="Detalles" details={details} />
 
                       <Card title="valorar">
                         {!isSuccess && (
@@ -187,7 +171,8 @@ const Doctor = ({ id }) => {
                       </Card>
                     </Card>
                   </Col>
-                  <Col span={12}>
+
+                  <Col md={12} xs={24}>
                     <Card>
                       <Typography.Title level={5}>
                         Especialidades
@@ -209,15 +194,8 @@ const Doctor = ({ id }) => {
                       </Timeline>
                     </Card>
                   </Col>
-                </Row>
 
-                <Row>
-                  <Col span={12}>
-                    <Card>
-                      <Comments data={reviews} mean={mean} />
-                    </Card>
-                  </Col>
-                  <Col span={12}>
+                  <Col md={12} xs={24}>
                     <Card
                       title="Agenda"
                       extra={
@@ -247,6 +225,12 @@ const Doctor = ({ id }) => {
                         ]}
                         pagination={false}
                       />
+                    </Card>
+                  </Col>
+
+                  <Col md={12} xs={24}>
+                    <Card>
+                      <Comments data={reviews} mean={mean} />
                     </Card>
                   </Col>
                 </Row>
