@@ -54,13 +54,7 @@ const Doctor = ({ id }) => {
 
   const handleSubmit = async (values) => {
     try {
-      // create user
-      const response = await api.createUser(values);
-      const reviewResponse = await api.createReview({
-        ...values,
-        doctor: id,
-        user_id: response.data.result.id,
-      });
+      const reviewResponse = await api.createReview({ id, ...values });
 
       setReviews((p) => [...p, reviewResponse.data.result]);
       setSuccess(true);
@@ -71,12 +65,9 @@ const Doctor = ({ id }) => {
 
   const handleSubmitAppointment = async (values) => {
     try {
-      // create user
-      const response = await api.createUser(values);
       const appointmentResponse = await api.createAppointment({
+        id,
         ...values,
-        doctor: id,
-        user_id: response.data.result.id,
       });
 
       setAppointments((p) => [...p, appointmentResponse.data.result]);
