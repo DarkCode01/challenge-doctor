@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import { useState, useCallback, useEffect } from "react";
 import dayjs from "dayjs";
 import Page from "components/Page";
-import Navbar from "components/Navbar";
 import Footer from "components/Footer";
 import Cards from "components/Cards";
 import Comments from "components/Comments";
@@ -11,6 +10,7 @@ import { useLocations } from "lib/hooks/useLocations";
 import { calculateMean } from "lib/utils";
 import ReviewForm from "components/ReviewForm";
 import AppointmentForm from "components/AppointmentForm";
+import Details from "components/Details";
 import {
   Space,
   Modal,
@@ -22,6 +22,7 @@ import {
   Col,
   Card,
   Drawer,
+  Alert,
   Layout,
   Descriptions,
   PageHeader,
@@ -40,7 +41,7 @@ const Doctor = ({ id }) => {
   const [isSuccess, setSuccess] = useState(false);
   const [isModal, setModal] = useState(false);
   const { locations } = useLocations();
-  const { details } = useDoctorDetails(id);
+  const { details, error } = useDoctorDetails(id);
   const [reviews, setReviews] = useState(details.reviews || []);
   const [appointments, setAppointments] = useState(details.appointments || []);
   const mean = calculateMean(reviews || []);
@@ -54,13 +55,7 @@ const Doctor = ({ id }) => {
 
   const handleSubmit = async (values) => {
     try {
-      // create user
-      const response = await api.createUser(values);
-      const reviewResponse = await api.createReview({
-        ...values,
-        doctor: id,
-        user_id: response.data.result.id,
-      });
+      const reviewResponse = await api.createReview({ id, ...values });
 
       setReviews((p) => [...p, reviewResponse.data.result]);
       setSuccess(true);
@@ -71,12 +66,9 @@ const Doctor = ({ id }) => {
 
   const handleSubmitAppointment = async (values) => {
     try {
-      // create user
-      const response = await api.createUser(values);
       const appointmentResponse = await api.createAppointment({
+        id,
         ...values,
-        doctor: id,
-        user_id: response.data.result.id,
       });
 
       setAppointments((p) => [...p, appointmentResponse.data.result]);
@@ -99,16 +91,10 @@ const Doctor = ({ id }) => {
   return (
     <Page>
       <Layout>
-        <Navbar />
-
         <Layout>
           <Layout.Content style={{ margin: "24px 16px 0", padding: "0 20px" }}>
             <div className={styles.container}>
-              <PageHeader
-                title="Principal"
-                subTitle="lista de doctores"
-                onBack={() => null}
-              />
+              <PageHeader title="Principal" subTitle="lista de doctores" />
 
               <Cards doctors={[1, 2, 3, 4, 5, 6, 7, 8, 9, 3, 2, 2]} />
 
@@ -154,27 +140,19 @@ const Doctor = ({ id }) => {
               height={640}
             >
               <Space size={10} direction="vertical">
-                <Row gutter={[16, 8]}>
-                  <Col span={12}>
+                {error.isError && (
+                  <Alert
+                    type="error"
+                    message="Error al intentar obtener los datos."
+                    onClose={() => error.handle(null)}
+                    closable
+                  />
+                )}
+
+                <Row gutter={[16, 16]}>
+                  <Col md={12} xs={24}>
                     <Card>
-                      <Descriptions
-                        title={
-                          <>
-                            Detalles
-                            <Divider />
-                          </>
-                        }
-                      >
-                        <Descriptions.Item label="Nombre">
-                          {details.names}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="Experiencia">
-                          {details.years} años
-                        </Descriptions.Item>
-                        <Descriptions.Item label="Ubicación">
-                          {details.location?.country}, {details.location?.state}
-                        </Descriptions.Item>
-                      </Descriptions>
+                      <Details title="Detalles" details={details} />
 
                       <Card title="valorar">
                         {!isSuccess && (
@@ -193,7 +171,8 @@ const Doctor = ({ id }) => {
                       </Card>
                     </Card>
                   </Col>
-                  <Col span={12}>
+
+                  <Col md={12} xs={24}>
                     <Card>
                       <Typography.Title level={5}>
                         Especialidades
@@ -215,15 +194,8 @@ const Doctor = ({ id }) => {
                       </Timeline>
                     </Card>
                   </Col>
-                </Row>
 
-                <Row>
-                  <Col span={12}>
-                    <Card>
-                      <Comments data={reviews} mean={mean} />
-                    </Card>
-                  </Col>
-                  <Col span={12}>
+                  <Col md={12} xs={24}>
                     <Card
                       title="Agenda"
                       extra={
@@ -253,6 +225,12 @@ const Doctor = ({ id }) => {
                         ]}
                         pagination={false}
                       />
+                    </Card>
+                  </Col>
+
+                  <Col md={12} xs={24}>
+                    <Card>
+                      <Comments data={reviews} mean={mean} />
                     </Card>
                   </Col>
                 </Row>

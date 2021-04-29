@@ -1,3 +1,4 @@
+import { useState, useCallback } from "react";
 import {
   Divider,
   Typography,
@@ -10,6 +11,11 @@ import {
 } from "antd";
 
 export default function AppointmentForm({ handleSubmit, locations }) {
+  const [isSubmitting, setSubmitting] = useState(false);
+  const loading = useCallback(() => setSubmitting(!isSubmitting), [
+    isSubmitting,
+  ]);
+
   return (
     <Form
       layout="vertical"
@@ -19,17 +25,24 @@ export default function AppointmentForm({ handleSubmit, locations }) {
         date: "",
         type: "virtual",
       }}
-      onFinish={handleSubmit}
+      onFinish={async (values) => {
+        await loading();
+        await handleSubmit(values);
+        await loading();
+      }}
     >
       <Typography.Title level={4}>Datos de la cita</Typography.Title>
       <Form.Item label="Titulo" name="name">
-        <Input />
+        <Input
+          placeholder="nombre para recordar la cita"
+          disabled={isSubmitting}
+        />
       </Form.Item>
       <Form.Item label="Fecha para la cita" name="date">
-        <DatePicker style={{ width: "100%" }} />
+        <DatePicker disabled={isSubmitting} style={{ width: "100%" }} />
       </Form.Item>
       <Form.Item label="Como sera su cita?" name="type">
-        <Radio.Group defaultValue="virtual">
+        <Radio.Group disabled={isSubmitting} defaultValue="virtual">
           <Radio.Button value="virtual">Virtual</Radio.Button>
           <Radio.Button value="presencial">Presencial</Radio.Button>
         </Radio.Group>
@@ -39,10 +52,10 @@ export default function AppointmentForm({ handleSubmit, locations }) {
 
       <Typography.Title level={4}>Datos personales</Typography.Title>
       <Form.Item label="Nombre" name="names">
-        <Input />
+        <Input disabled={isSubmitting} placeholder="Nombre" />
       </Form.Item>
       <Form.Item label="Ubicación" name="location_id">
-        <Select placeholder="seleccionar">
+        <Select disabled={isSubmitting} placeholder="seleccionar">
           {locations.map((loc) => (
             <Select.Option value={loc.id} key={loc.id}>
               {loc.country}, {loc.state}
@@ -51,7 +64,7 @@ export default function AppointmentForm({ handleSubmit, locations }) {
         </Select>
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit" block>
+        <Button loading={isSubmitting} type="primary" htmlType="submit" block>
           enviar
         </Button>
       </Form.Item>
