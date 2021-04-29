@@ -243,7 +243,7 @@ const Doctor = ({ id }) => {
   );
 };
 
-export async function getServerSideProps(context) {
+export async function getStaticProps(context) {
   return {
     props: {
       id: context.query.id,
