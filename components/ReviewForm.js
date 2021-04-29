@@ -15,9 +15,9 @@ export default function ReviewForm({ handleSubmit, locations }) {
         starts: 1,
         names: "",
       }}
-      onFinish={async () => {
+      onFinish={async (values) => {
         await loading();
-        await handleSubmit();
+        await handleSubmit(values);
         await loading();
       }}
     >

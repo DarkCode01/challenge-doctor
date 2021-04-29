@@ -25,9 +25,9 @@ export default function AppointmentForm({ handleSubmit, locations }) {
         date: "",
         type: "virtual",
       }}
-      onFinish={async () => {
+      onFinish={async (values) => {
         await loading();
-        await handleSubmit();
+        await handleSubmit(values);
         await loading();
       }}
     >
