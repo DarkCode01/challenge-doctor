@@ -10,7 +10,7 @@ export default function CardDoctor({ isLoading, doctors }) {
         const mean = calculateMean(doctor?.reviews || []);
 
         return (
-          <Col span={8} key={`doctor-card-${index}`}>
+          <Col xs={24} span={8} md={8} key={`doctor-card-${index}`}>
             <Card
               loading={isLoading}
               actions={[
