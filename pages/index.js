@@ -64,7 +64,8 @@ export default function Home() {
               <Pagination
                 className={styles.pagination}
                 current={parseInt(router.query.page) || 1}
-                total={pagination.items}
+                total={100}
+                pageSize={15}
                 showSizeChanger={false}
                 onChange={(p) => router.push(`/?page=${p}`)}
               />
